@@ -8,7 +8,6 @@ def start():
     print(export_to_excel(link))
     
 def get_id(link):
-    #Get the tour name from the site
     battlefy_link = link.split('/')
     battlefy_id = battlefy_link[5]
     return battlefy_id
