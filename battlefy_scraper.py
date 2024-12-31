@@ -1,6 +1,7 @@
 import requests
 import csv
 import json
+import os
 
 
 def start():
@@ -9,18 +10,22 @@ def start():
     
 def get_id(link):
     battlefy_link = link.split('/')
+    tour_name = battlefy_link[4]
     battlefy_id = battlefy_link[5]
-    return battlefy_id
+    return (tour_name,battlefy_id)
 
     
-    
-
 
 def export_to_excel(battlefy_link: str):
     
-    battlefy_id = get_id(battlefy_link)
+    (tour_name, battlefy_id) = get_id(battlefy_link)
+    
+    
     try:
-        if(battlefy_id):
+        if((tour_name,battlefy_id)):
+            print(tour_name)
+            tour_name = tour_name.replace("-","")
+            print(tour_name)
             requesturl = f'https://dtmwra1jsgyb0.cloudfront.net/tournaments/{battlefy_id}/teams'
             htmldata = requests.get(requesturl)
             data = json.loads(htmldata.content.decode('utf-8'))
@@ -28,8 +33,11 @@ def export_to_excel(battlefy_link: str):
             for s in data:
                 result[s['captain']['username']] = ((s['name'], s['customFields'][1]['value']))
             
-            
-            with open('teams.csv','w',newline='',encoding = 'utf-8') as csvfile:
+            cur_directory = os.getcwd()
+            target_location = f'{cur_directory}\\tourteams'
+            if not os.path.exists(target_location):
+                os.mkdir(target_location)
+            with open(f'{target_location}\\{tour_name}.csv','w',newline='',encoding = 'utf-8') as csvfile:
                 headers = ['BattlefyName', 'IGN', 'Pokepaste']
                 teamwrite = csv.writer(csvfile)
                 teamwrite.writerow(headers)
@@ -42,5 +50,6 @@ def export_to_excel(battlefy_link: str):
         return "Invalid link"
     
 
-if __name__ == "__main__":   
-    start()
+if __name__ == "__main__":
+    link = "https://battlefy.com/victoryroad/victory-road-january-challenge/6772c7c82bc12e0040d6d1e6/participants"  
+    export_to_excel(link)
