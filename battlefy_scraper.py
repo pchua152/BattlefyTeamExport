@@ -43,7 +43,7 @@ def export_to_excel(battlefy_link: str):
                     teamwrite.writerow([x,y[0],f'=HYPERLINK("{y[1]}")'])
                     
     
-        return "Teams written to teams.csv"
+        return "Teams written to csv file"
     except:
         return "Invalid link"
     
